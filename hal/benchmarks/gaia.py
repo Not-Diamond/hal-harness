@@ -15,14 +15,15 @@ GAIA_LEVELS = {
 
 class GaiaBenchmark(BaseBenchmark):
     """Gaia benchmark implementation"""
-    
+
     def __init__(self, agent_dir: str, config: Dict[str, Any], benchmark_name: str = 'gaia'):
         self.benchmark_name = benchmark_name
         self.setup_script = None
         self.requires_sandbox = False
         super().__init__(agent_dir, config, requires_sandbox=self.requires_sandbox, setup_script=self.setup_script)
-    
-        dataset = self._load_gaia_dataset(config_split=GAIA_DEFAULT_CONFIG, split='validation')
+
+        # a9: change split from 'validation' to 'test' to support HF dataset splits as of 2025-11-13
+        dataset = self._load_gaia_dataset(config_split=GAIA_DEFAULT_CONFIG, split='test')
 
         self.benchmark = {}
         for record in dataset:
@@ -32,7 +33,7 @@ class GaiaBenchmark(BaseBenchmark):
                 self.benchmark[task_id]['files'] = {
                     record['file_name']: record.get('file_path', '')
                 }
-            
+
 
     def evaluate_output(self, agent_output: Dict[str, Any], run_id: str) -> Dict[str, Any]:
         """Evaluate agent outputs using Gaia evaluation while capturing task metrics."""
@@ -51,7 +52,7 @@ class GaiaBenchmark(BaseBenchmark):
 
         return eval_results
 
-    
+
     def get_metrics(self, eval_results: Dict[str, Any]) -> Dict[str, Any]:
         """
         Calculate metrics from evaluation results.
@@ -62,7 +63,7 @@ class GaiaBenchmark(BaseBenchmark):
         Returns:
             Dictionary with calculated metrics and task lists
         """
-        
+
         # calculate accuracy for overall and for each level separately
         overall_correct_count = 0
         level_correct_count = {
@@ -75,7 +76,7 @@ class GaiaBenchmark(BaseBenchmark):
             'level_2': 0,
             'level_3': 0
         }
-        
+
         for task_id, task_output in self.benchmark.items():
             if task_id in eval_results:
                 # update the level count
@@ -85,7 +86,7 @@ class GaiaBenchmark(BaseBenchmark):
                     level_count['level_2'] += 1
                 elif str(self.benchmark[task_id]['Level']) == '3':
                     level_count['level_3'] += 1
-                
+
                 # if the agent got the task correct, update the level and overall correct counts
                 if int(eval_results[task_id]['score']) > 0:
                     overall_correct_count += 1
@@ -98,10 +99,10 @@ class GaiaBenchmark(BaseBenchmark):
             else:
                 level_count[f'level_{str(self.benchmark[task_id]["Level"])}'] += 1
 
-                
+
         successful_tasks = [task_id for task_id, task_output in eval_results.items() if int(task_output['score']) > 0]
         failed_tasks = [task_id for task_id, task_output in eval_results.items() if int(task_output['score']) == 0]
-                
+
         results = {
             'accuracy': overall_correct_count / len(eval_results),
             'level_1_accuracy': level_correct_count['level_1'] / level_count['level_1'] if level_count['level_1'] > 0 else None,
