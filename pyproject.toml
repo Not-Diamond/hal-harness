@@ -34,7 +34,7 @@ azure = [
 ]
 appworld = [
     "appworld @ git+https://github.com/stonybrooknlp/appworld.git",
-    "appworld-experiments[simplified,smolagents] @ git+https://github.com/stonybrooknlp/appworld.git@main#egg=appworld-experiments&subdirectory=experiments",
+    "appworld-agents[simplified,smolagents] @ git+https://github.com/stonybrooknlp/appworld.git@main#egg=appworld-agents&subdirectory=experiments",
 ]
 taubench = [
     "tau-bench @ git+https://github.com/benediktstroebl/tau-bench@807e348b46a225242d5a045a8cecc690719e4b21",
@@ -46,7 +46,7 @@ assistantbench = [
     "browsergym==0.13.4"
 ]
 hal-agent-inspect = [
-    "smolagents @ git+https://github.com/benediktstroebl/smolagents@c77c99a855b13dbef2af66904448948d01bdc25c",
+    "smolagents @ git+https://github.com/huggingface/smolagents@0c62b18dde5a163370919888290ff4f506dc918c",
     "tau-bench @ git+https://github.com/benediktstroebl/tau-bench@807e348b46a225242d5a045a8cecc690719e4b21",
     "mammoth",
     "python_pptx>=1.0.2",
@@ -58,7 +58,7 @@ hal-agent-inspect = [
     "SpeechRecognition",
 ]
 hal-agent = [
-    "smolagents @ git+https://github.com/benediktstroebl/smolagents@0c62b18dde5a163370919888290ff4f506dc918c",
+    "smolagents @ git+https://github.com/huggingface/smolagents@0c62b18dde5a163370919888290ff4f506dc918c",
     "tau-bench @ git+https://github.com/benediktstroebl/tau-bench@807e348b46a225242d5a045a8cecc690719e4b21",
     "mammoth",
     "python_pptx>=1.0.2",
@@ -71,7 +71,7 @@ hal-agent = [
 ]
 coreagent = [
     "smolagents @ git+https://github.com/huggingface/smolagents@0c62b18dde5a163370919888290ff4f506dc918c",
-    "tau-bench @ git+https://github.com/benediktstroebl/tau-bench@bef42de85cdbfb5490e6f3bd19d8e053df977e08",
+    "tau-bench @ git+https://github.com/benediktstroebl/tau-bench@807e348b46a225242d5a045a8cecc690719e4b21",
     "mammoth",
     "python_pptx>=1.0.2",
     "pdfminer>=20191125",
@@ -125,7 +125,7 @@ open_deep_research = [
     "torch",
     "xlrd",
     "SpeechRecognition",
-    "smolagents[quality,test] @ git+https://github.com/huggingface/smolagents@d8daf8f6e68d4e7ebe9f428938c3466fe482ebb0",
+    "smolagents[quality,test] @ git+https://github.com/huggingface/smolagents@0c62b18dde5a163370919888290ff4f506dc918c",
     "sqlalchemy", # for ./examples",
 ]
 
