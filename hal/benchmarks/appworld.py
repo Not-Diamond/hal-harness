@@ -26,6 +26,8 @@ class AppWorldBenchmark(BaseBenchmark):
             requires_sandbox=self.requires_sandbox,
             setup_script=self.setup_script,
         )
+        # Use environment variable if set, otherwise use package installation location
+        self.benchmark_directory = os.path.dirname(os.path.abspath(__file__))
         # Load dataset splits
         self.splits = {
             "train": self._read_task_ids("train.txt"),
@@ -35,13 +37,16 @@ class AppWorldBenchmark(BaseBenchmark):
         }
         # Create benchmark dictionary
         self.benchmark = {}
-        benchmark_directory = os.path.join(os.getcwd(), "hal", "benchmarks", "appworld")
-        data_directory = os.path.join(benchmark_directory, "data")
+        benchmark_directory = self.benchmark_directory
+        data_directory = os.environ.get("APPWORLD_DATA_DIR") or os.path.join(
+            benchmark_directory, "data"
+        )
         if not os.path.exists(data_directory):
             raise FileNotFoundError(
                 f"Data directory {data_directory} does not exist. "
-                "Please download AppWorld data: "
-                f"`pip install appworld && appworld download data --root {benchmark_directory}`"
+                "Please download AppWorld data using one of these methods:\n"
+                f"  1. Set APPWORLD_DATA_DIR environment variable to your data location\n"
+                f"  2. Install to package location: `pip install appworld && appworld download data --root {benchmark_directory}`"
             )
         for task_id in self.splits[self.split]:
             self.benchmark[task_id] = {
@@ -51,7 +56,7 @@ class AppWorldBenchmark(BaseBenchmark):
 
     def _read_task_ids(self, filename: str) -> List[str]:
         """Read task IDs from a given file"""
-        file_path = os.path.join(os.getcwd(), "hal", "benchmarks", "appworld", filename)
+        file_path = os.path.join(self.benchmark_directory, filename)
         with open(file_path) as file:
             return [line.strip() for line in file.readlines()]
 
