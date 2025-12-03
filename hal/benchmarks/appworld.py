@@ -27,7 +27,9 @@ class AppWorldBenchmark(BaseBenchmark):
             setup_script=self.setup_script,
         )
         # Use environment variable if set, otherwise use package installation location
-        self.benchmark_directory = os.path.dirname(os.path.abspath(__file__))
+        self.benchmark_directory = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "appworld"
+        )
         # Load dataset splits
         self.splits = {
             "train": self._read_task_ids("train.txt"),
