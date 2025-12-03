@@ -30,6 +30,10 @@ class AppWorldBenchmark(BaseBenchmark):
         self.benchmark_directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "appworld"
         )
+        # Set data directory (can be overridden by environment variable)
+        self.data_directory = os.environ.get("APPWORLD_DATA_DIR") or os.path.join(
+            self.benchmark_directory, "data"
+        )
         # Load dataset splits
         self.splits = {
             "train": self._read_task_ids("train.txt"),
@@ -39,26 +43,29 @@ class AppWorldBenchmark(BaseBenchmark):
         }
         # Create benchmark dictionary
         self.benchmark = {}
-        benchmark_directory = self.benchmark_directory
-        data_directory = os.environ.get("APPWORLD_DATA_DIR") or os.path.join(
-            benchmark_directory, "data"
-        )
-        if not os.path.exists(data_directory):
+        if not os.path.exists(self.data_directory):
             raise FileNotFoundError(
-                f"Data directory {data_directory} does not exist. "
+                f"Data directory {self.data_directory} does not exist. "
                 "Please download AppWorld data using one of these methods:\n"
                 f"  1. Set APPWORLD_DATA_DIR environment variable to your data location\n"
-                f"  2. Install to package location: `pip install appworld && appworld download data --root {benchmark_directory}`"
+                f"  2. Install to package location: `pip install appworld && appworld download data --root {self.benchmark_directory}` or set APPWORLD_DATA_DIR environment variable to your data location"
             )
         for task_id in self.splits[self.split]:
             self.benchmark[task_id] = {
                 "task_id": task_id,
-                "files": {"data": data_directory},
+                "files": {"data": self.data_directory},
             }
 
     def _read_task_ids(self, filename: str) -> List[str]:
         """Read task IDs from a given file"""
-        file_path = os.path.join(self.benchmark_directory, filename)
+        # Try data directory first (if using APPWORLD_DATA_DIR)
+        data_file_path = os.path.join(self.data_directory, "datasets", filename)
+        if os.path.exists(data_file_path):
+            file_path = data_file_path
+        else:
+            # Fall back to benchmark directory
+            file_path = os.path.join(self.benchmark_directory, filename)
+
         with open(file_path) as file:
             return [line.strip() for line in file.readlines()]
 
